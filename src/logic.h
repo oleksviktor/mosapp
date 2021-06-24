@@ -1,7 +1,9 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
+#include <QApplication>
 #include <QDebug>
+#include <QMessageBox>
 #include <QObject>
 
 #include "mainwindow.h"
@@ -19,7 +21,13 @@ private:
 
 private slots:
     void onLoadImage();
-    void onSuccess();
+    void onLoadImageSuccess();
+
+    void onRequest();
+    void onRequestSuccess();
+    void onRequestFailed();
+
+    void onPreparetoQuit();
 };
 
 #endif   // LOGIC_H

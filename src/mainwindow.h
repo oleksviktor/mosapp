@@ -2,13 +2,20 @@
 #define MAINWINDOW_H
 
 #include <QBoxLayout>
+#include <QCborStreamWriter>
+#include <QDate>
+#include <QDateTime>
 #include <QImage>
+#include <QJsonDocument>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QPixmap>
 #include <QPushButton>
+#include <QSettings>
 #include <QWidget>
+
+#include "network.h"
 
 class MainWindow : public QObject
 {
@@ -20,10 +27,17 @@ public:
 
     void show();
 
+    QByteArray getData();
+
     QLabel *getImageLabel();
+
+    void saveSettings();
+    void loadSettings();
+    void lockInterface();
 
 signals:
     void loadImage();
+    void sendRequest();
 
 private:
     QImage *image;

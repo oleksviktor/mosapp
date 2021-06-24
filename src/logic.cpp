@@ -5,10 +5,16 @@ Logic::Logic( QObject *parent ) : QObject( parent )
     w = new MainWindow( this );
 
     QObject::connect( w, &MainWindow::loadImage, this, &Logic::onLoadImage );
-    QObject::connect( NETWORK, &Network::success, this, &Logic::onSuccess );
+    QObject::connect( NETWORK, &Network::loadImageSuccess, this, &Logic::onLoadImageSuccess );
 
+    QObject::connect( w, &MainWindow::sendRequest, this, &Logic::onRequest );
+    QObject::connect( NETWORK, &Network::requestSuccess, this, &Logic::onRequestSuccess );
+    QObject::connect( NETWORK, &Network::requestFailed, this, &Logic::onRequestFailed );
+
+    QObject::connect( qApp, &QApplication::aboutToQuit, this, &Logic::onPreparetoQuit );
     w->show();
-    NETWORK->setUrl( "https://alt.mos.ru/api/users/v1/frontend/json/captcha" );
+    w->loadSettings();
+    NETWORK->loadImage();
 }
 
 void Logic::onLoadImage()
@@ -16,8 +22,36 @@ void Logic::onLoadImage()
     NETWORK->loadImage();
 }
 
-void Logic::onSuccess()
+void Logic::onLoadImageSuccess()
 {
     w->getImageLabel()->setPixmap( NETWORK->getImage().pixmap );
-    qDebug() << NETWORK->getImage().code;
+    qDebug() << "Image loaded";
+}
+
+void Logic::onRequest()
+{
+    qDebug() << w->getData();
+    NETWORK->takePlace( w->getData() );
+}
+
+void Logic::onRequestSuccess()
+{
+    w->lockInterface();
+    qDebug() << "Check Email";
+    QMessageBox *msg = new QMessageBox();
+    msg->setText( "Заявка успешно отправлена.\nПроверьте электронную почту." );
+    msg->show();
+}
+
+void Logic::onRequestFailed()
+{
+    qDebug() << "Some error";
+    QMessageBox *msg = new QMessageBox();
+    msg->setText( "Какая-то ошибка при регистрации" );
+    msg->show();
+}
+
+void Logic::onPreparetoQuit()
+{
+    w->saveSettings();
 }

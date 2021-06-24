@@ -2,10 +2,13 @@
 #define NETWORK_H
 
 #include <QImage>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QObject>
 #include <QPixmap>
+
 #define NETWORK Network::getInstance()
 
 struct NetworkImage
@@ -22,14 +25,14 @@ public:
 
     void loadImage();
 
-    void setUrl( const QString &newUrl );
-
-    const QString &getUrl() const;
+    void takePlace( const QByteArray &binaryData );
 
     const NetworkImage &getImage() const;
 
 signals:
-    void success();
+    void loadImageSuccess();
+    void requestSuccess();
+    void requestFailed();
 
 private:
     static Network *_network;
@@ -41,6 +44,7 @@ private:
     QNetworkAccessManager *manager;
 
     QString url;
+    QString captchaUrl;
 
     NetworkImage image;
 
